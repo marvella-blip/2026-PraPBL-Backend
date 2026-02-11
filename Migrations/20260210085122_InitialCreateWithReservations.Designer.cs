@@ -11,14 +11,39 @@ using _2026_PraPBL_Backend.Data;
 namespace _2026_PraPBL_Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260209142319_InitialCreateRoom")]
-    partial class InitialCreateRoom
+    [Migration("20260210085122_InitialCreateWithReservations")]
+    partial class InitialCreateWithReservations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
+
+            modelBuilder.Entity("_2026_PraPBL_Backend.Models.Reservation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("BorrowDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BorrowerName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Purpose")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("Reservations");
+                });
 
             modelBuilder.Entity("_2026_PraPBL_Backend.Models.Room", b =>
                 {
@@ -61,7 +86,34 @@ namespace _2026_PraPBL_Backend.Migrations
                             Description = "Lantai 1 Gedung TC",
                             IsAvailable = true,
                             Name = "Ruang Teater"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Capacity = 25,
+                            Description = "Lantai 3 Gedung D3",
+                            IsAvailable = true,
+                            Name = "Lab Pemrograman"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Capacity = 500,
+                            Description = "Lantai 1 Gedung D4",
+                            IsAvailable = true,
+                            Name = "Aula Pens"
                         });
+                });
+
+            modelBuilder.Entity("_2026_PraPBL_Backend.Models.Reservation", b =>
+                {
+                    b.HasOne("_2026_PraPBL_Backend.Models.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Room");
                 });
 #pragma warning restore 612, 618
         }

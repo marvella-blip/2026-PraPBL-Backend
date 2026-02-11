@@ -1,14 +1,21 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace _2026_PraPBL_Backend.Models
 {
     public class Reservation
     {
         public int Id { get; set; }
-        public int RoomId { get; set; } // ID Ruangan yang dipinjam
-        public string? BorrowerName { get; set; } // Nama peminjam (misal: Mauren)
-        public DateTime BorrowDate { get; set; }
-        public string? Purpose { get; set; } // Tujuan (misal: Rapat Hima)
+        public int RoomId { get; set; }
         
-        // Relasi ke Model Room
-        public virtual Room? Room { get; set; }
+        [Required]
+        public string BorrowerName { get; set; } = string.Empty;
+        
+        [Required]
+        public string Purpose { get; set; } = string.Empty;
+        
+        public DateTime BorrowDate { get; set; }
+        
+        // Tambahkan ini untuk fitur Pengelolaan Status (PPT Poin 2)
+        public string Status { get; set; } = "Menunggu Persetujuan"; 
     }
 }

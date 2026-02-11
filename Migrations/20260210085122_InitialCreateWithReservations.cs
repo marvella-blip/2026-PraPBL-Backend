@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace _2026_PraPBL_Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreateRoom : Migration
+    public partial class InitialCreateWithReservations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,19 +30,51 @@ namespace _2026_PraPBL_Backend.Migrations
                     table.PrimaryKey("PK_Rooms", x => x.Id);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Reservations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    RoomId = table.Column<int>(type: "INTEGER", nullable: false),
+                    BorrowerName = table.Column<string>(type: "TEXT", nullable: true),
+                    BorrowDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Purpose = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reservations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reservations_Rooms_RoomId",
+                        column: x => x.RoomId,
+                        principalTable: "Rooms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Rooms",
                 columns: new[] { "Id", "Capacity", "DeletedAt", "Description", "IsAvailable", "Name" },
                 values: new object[,]
                 {
                     { 1, 30, null, "Lantai 2 Gedung D4", true, "Lab SCADA" },
-                    { 2, 100, null, "Lantai 1 Gedung TC", true, "Ruang Teater" }
+                    { 2, 100, null, "Lantai 1 Gedung TC", true, "Ruang Teater" },
+                    { 3, 25, null, "Lantai 3 Gedung D3", true, "Lab Pemrograman" },
+                    { 4, 500, null, "Lantai 1 Gedung D4", true, "Aula Pens" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reservations_RoomId",
+                table: "Reservations",
+                column: "RoomId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Reservations");
+
             migrationBuilder.DropTable(
                 name: "Rooms");
         }
