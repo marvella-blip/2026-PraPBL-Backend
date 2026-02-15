@@ -185,3 +185,7 @@ D:\semester 4\PROJECT PraPBL\2026-PraPBL-Backend\obj\Debug\net10.0\refint\2026-P
 D:\semester 4\PROJECT PraPBL\2026-PraPBL-Backend\obj\Debug\net10.0\2026-PraPBL-Backend.pdb
 D:\semester 4\PROJECT PraPBL\2026-PraPBL-Backend\obj\Debug\net10.0\2026-PraPBL-Backend.genruntimeconfig.cache
 D:\semester 4\PROJECT PraPBL\2026-PraPBL-Backend\obj\Debug\net10.0\ref\2026-PraPBL-Backend.dll
+D:\semester 4\PROJECT PraPBL\2026-PraPBL-Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\semester 4\PROJECT PraPBL\2026-PraPBL-Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\semester 4\PROJECT PraPBL\2026-PraPBL-Backend\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\semester 4\PROJECT PraPBL\2026-PraPBL-Backend\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

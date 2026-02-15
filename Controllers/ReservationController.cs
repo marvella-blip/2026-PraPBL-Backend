@@ -2,11 +2,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using _2026_PraPBL_Backend.Data;
 using _2026_PraPBL_Backend.Models;
+using Microsoft.AspNetCore.Authorization; // 1. TAMBAHKAN BARIS INI WAJIB!
 
 namespace _2026_PraPBL_Backend.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    // [Authorize] <-- Kalau kamu taruh di sini, SEMUA pintu di bawahnya otomatis kekunci.
+    // Tapi biar lebih jelas, kita gembok satu-satu aja per fungsinya ya.
     public class ReservationsController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -16,49 +19,66 @@ namespace _2026_PraPBL_Backend.Controllers
             _context = context;
         }
 
-        // PPT Poin 3: Melihat daftar riwayat peminjaman
+        // -----------------------------------------------------------------
+        // PINTU 1: LIHAT DATA (Semua yang login boleh masuk)
+        // -----------------------------------------------------------------
         [HttpGet]
+        [Authorize] // <-- Sensor Gelang Biasa
         public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations()
         {
             return await _context.Reservations.ToListAsync();
         }
 
-        // PPT Poin 1: Menambah data peminjaman
+        // -----------------------------------------------------------------
+        // PINTU 2: PINJAM RUANGAN (Semua yang login boleh masuk)
+        // -----------------------------------------------------------------
         [HttpPost]
-        public async Task<IActionResult> PostReservation(Reservation res)
+        [Authorize] // <-- Sensor Gelang Biasa
+        public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
         {
-            _context.Reservations.Add(res);
+            _context.Reservations.Add(reservation);
             await _context.SaveChangesAsync();
-            return Ok(res);
+            return CreatedAtAction(nameof(GetReservations), new { id = reservation.Id }, reservation);
         }
 
-        // PPT Poin 2: Mengubah status peminjaman (Setuju/Tolak)
+        // -----------------------------------------------------------------
+        // PINTU 3: UBAH STATUS (HANYA ADMIN YANG BOLEH!)
+        // -----------------------------------------------------------------
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")] // <-- SENSOR GELANG VIP! (Selain Admin akan ditolak)
         public async Task<IActionResult> UpdateStatus(int id, [FromBody] string newStatus)
         {
-            var res = await _context.Reservations.FindAsync(id);
-            if (res == null) return NotFound();
+            var reservation = await _context.Reservations.FindAsync(id);
+            if (reservation == null) return NotFound();
 
-            res.Status = newStatus;
+            reservation.Status = newStatus;
 
-            // Logika Otomatis: Jika disetujui, ruangan jadi tidak tersedia
+            // Logika mengunci ruangan kalau disetujui
             if (newStatus == "Disetujui")
             {
-                var room = await _context.Rooms.FindAsync(res.RoomId);
+                var room = await _context.Rooms.FindAsync(reservation.RoomId);
                 if (room != null) room.IsAvailable = false;
             }
 
             await _context.SaveChangesAsync();
             return NoContent();
         }
-        
-        // PPT Poin 1: Menghapus data peminjaman
+
+        // -----------------------------------------------------------------
+        // PINTU 4: HAPUS DATA (HANYA ADMIN YANG BOLEH!)
+        // -----------------------------------------------------------------
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")] // <-- SENSOR GELANG VIP!
         public async Task<IActionResult> DeleteReservation(int id)
         {
-            var res = await _context.Reservations.FindAsync(id);
-            if (res == null) return NotFound();
-            _context.Reservations.Remove(res);
+            var reservation = await _context.Reservations.FindAsync(id);
+            if (reservation == null) return NotFound();
+
+            // Logika membuka kunci ruangan saat dihapus
+            var room = await _context.Rooms.FindAsync(reservation.RoomId);
+            if (room != null) room.IsAvailable = true;
+
+            _context.Reservations.Remove(reservation);
             await _context.SaveChangesAsync();
             return NoContent();
         }

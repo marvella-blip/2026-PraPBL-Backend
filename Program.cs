@@ -18,9 +18,37 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 
+builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
+
 // 2. Koneksi ke Database SQLite
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseSqlite("Data Source=MaurenDatabase.db"));
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("IzinkanReact",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173") // Port default Vite (Frontend kamu)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 
 var app = builder.Build();
 
@@ -40,7 +68,7 @@ using (var scope = app.Services.CreateScope())
             new Room { Id = 2, Name = "Ruang Teater", Description = "Lantai 1 Gedung D3", Capacity = 100 },
             new Room { Name = "Lab Agile Development", Description = "Gedung D4 Lantai 2", Capacity = 30 },
             new Room { Name = "Aula Pens", Description = "Gedung Pascasarjana Lantai 6", Capacity = 500 }
-        );
+        );  
         context.SaveChanges();
     }
 }
@@ -50,6 +78,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi(); 
 }
 
+app.UseAuthentication(); 
+app.UseSwagger();
+app.UseSwaggerUI(); 
 app.UseCors("AllowReactApp");
 app.UseAuthorization(); 
 app.MapControllers();

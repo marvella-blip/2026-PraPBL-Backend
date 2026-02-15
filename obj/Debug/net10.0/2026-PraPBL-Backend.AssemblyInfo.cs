@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("2026-PraPBL-Backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8e02a831d531d502809c7c94701251c7404b2cf1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+49b461d5e4c945dc931c172698ed2ae774bc7267")]
 [assembly: System.Reflection.AssemblyProductAttribute("2026-PraPBL-Backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("2026-PraPBL-Backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
